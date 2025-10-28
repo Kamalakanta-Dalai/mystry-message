@@ -77,7 +77,7 @@ const Navbar = () => {
                     href: "#",
                     icon: (
                       <img
-                        src="https://assets.aceternity.com/manu.png"
+                        src="https://img.icons8.com/?size=100&id=nXduhA13SMUu&format=png&color=000000"
                         className="h-7 w-7 shrink-0 rounded-full"
                         width={50}
                         height={50}

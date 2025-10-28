@@ -1,5 +1,3 @@
-import Navbar from "@/components/customUI/Navbar";
-
 export default function RootLayout({
   children,
 }: Readonly<{
