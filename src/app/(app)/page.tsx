@@ -13,6 +13,7 @@ import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import Home from "./home";
 import { LogIn, LogOut } from "lucide-react";
+import Image from "next/image";
 
 const Navbar = () => {
   const { data: session } = useSession();
@@ -76,8 +77,8 @@ const Navbar = () => {
                     label: session ? `${user.username}` : "User",
                     href: "#",
                     icon: (
-                      <img
-                        src="https://img.icons8.com/?size=100&id=nXduhA13SMUu&format=png&color=000000"
+                      <Image
+                        src="/flaticon.png"
                         className="h-7 w-7 shrink-0 rounded-full"
                         width={50}
                         height={50}

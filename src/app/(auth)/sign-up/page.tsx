@@ -7,7 +7,7 @@ import * as z from "zod";
 import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
 import { ApiResponse } from "@/app/types/ApiResponse";
-import { useDebounceCallback, useDebounceValue } from "usehooks-ts";
+import { useDebounceCallback } from "usehooks-ts";
 import { useRouter } from "next/navigation";
 import { signUpSchema } from "@/app/Schemas/signUpSchema";
 import { Loader2, CircleCheck, CircleX } from "lucide-react";
@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/field";
 import Link from "next/link";
 
-const page = () => {
+const Page = () => {
   const [username, setUsername] = useState("");
   const [usernameMessage, setUsernameMessage] = useState("");
 
@@ -232,4 +232,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

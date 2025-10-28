@@ -21,7 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 
-export default function FeedbackPage() {
+const FeedbackPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [items, setItems] = useState<{ key: string; label: string }[]>([
@@ -213,4 +213,6 @@ export default function FeedbackPage() {
       </div>
     </>
   );
-}
+};
+
+export default FeedbackPage;

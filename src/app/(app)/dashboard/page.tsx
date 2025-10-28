@@ -10,14 +10,13 @@ import axios, { AxiosError } from "axios";
 import { Button } from "@/components/ui/button";
 import { Loader2, RefreshCcw, ArrowLeft } from "lucide-react";
 import MessageCard from "@/components/customUI/messageCard";
-import * as z from "zod";
 
 import { acceptMessageScehma } from "@/app/Schemas/acceptMessageSchema";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { useRouter } from "next/navigation";
 
-const dashboard = () => {
+const Dashboard = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSwitchLoading, setIsSwitchLoading] = useState(false);
@@ -218,4 +217,4 @@ const dashboard = () => {
   );
 };
 
-export default dashboard;
+export default Dashboard;

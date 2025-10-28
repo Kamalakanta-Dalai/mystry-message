@@ -1,10 +1,8 @@
 "use client";
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -22,7 +20,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { DeleteIcon } from "lucide-react";
 import { toast } from "sonner";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { ApiResponse } from "@/app/types/ApiResponse";
 import { Message } from "@/app/model/User";
 

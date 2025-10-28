@@ -21,7 +21,7 @@ export async function sendVerificationEmail(
       console.error("Resend send error:", error);
       return {
         success: false,
-        message: (error as any)?.message || "Failed to send verification email",
+        message: error?.message || "Failed to send verification email",
       };
     }
 
