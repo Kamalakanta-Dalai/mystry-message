@@ -18,11 +18,11 @@ export async function GET(request: Request) {
 
     //validate with zod
     const result = UsernameQuerySchema.safeParse(queryParam);
-    console.log(result); //TODO: Remove this line
+    // console.log(result); //TODO: Remove this line
 
     if (!result.success) {
       const usernameErrors = result.error.format().username?._errors || [];
-
+      console.log("here it is");
       return Response.json(
         {
           success: false,
@@ -42,6 +42,7 @@ export async function GET(request: Request) {
       isVerified: true,
     });
     if (existingUserVerifiedByUsername) {
+      console.log("Username is already taken");
       return Response.json(
         {
           success: false,
@@ -50,7 +51,7 @@ export async function GET(request: Request) {
         { status: 400 }
       );
     }
-
+    console.log("Username is available");
     return Response.json(
       { success: true, message: "Username is available" },
       { status: 200 }

@@ -1,43 +1,48 @@
-import { google } from "@ai-sdk/google";
-import { streamText, UIMessage, convertToModelMessages } from "ai";
-import { APICallError } from "ai";
+import { GoogleGenAI, Type } from "@google/genai";
 import { NextResponse } from "next/server";
-// Allow streaming responses up to 30 seconds
-export const maxDuration = 30;
-export const runtime = "edge";
 
-export async function POST(req: Request) {
+// The client gets the API key from the environment variable `GEMINI_API_KEY`.
+const ai = new GoogleGenAI({});
+
+export async function GET(req: Request) {
   try {
-    const prompt =
-      "Create a list of three open-ended and engaging questions formatted as a single string. Each question should be separated by '||'. These questions are for an anonymous social messaging platform, like Qooh.me, and should be suitable for a diverse audience. Avoid personal or sensitive topics, focusing instead on universal themes that encourage friendly interaction. Forexample, your output should be structured like this: 'What's a hobby you've recently started?||If you could have dinner with any historical figure, who would it be?||What's a simple thing that makes you happy?'. Ensure the questions are intriguing, foster curiosity, and contribute to a positive and welcoming conversational environment";
-    const { messages }: { messages: UIMessage[] } = await req.json();
+    const response = await ai.models.generateContent({
+      model: "gemini-2.0-flash",
+      contents: "Ask me anything? Anything you are curious about me.",
 
-    const result = streamText({
-      model: google("gemini-2.0-flash"),
-      system: prompt,
-      maxOutputTokens: 400,
-      messages: convertToModelMessages(messages),
-    });
-
-    return result.toUIMessageStreamResponse();
-  } catch (error) {
-    if (APICallError.isInstance(error)) {
-      // Handle the error
-      const { name, statusCode, responseHeaders, responseBody, message } =
-        error;
-      return NextResponse.json(
-        {
-          name,
-          statusCode,
-          responseHeaders,
-          responseBody,
-          message,
+      config: {
+        systemInstruction:
+          "Ask three questions and make sure you ask different questions everytime and each question must have a question Number starting with 1",
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              questionNumber: {
+                type: Type.STRING,
+              },
+              question: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.STRING,
+                },
+              },
+            },
+            propertyOrdering: ["questionNumber", "question"],
+          },
         },
-        { status: statusCode }
-      );
-    } else {
-      console.error("An unexpected error occured ", error);
-      throw error;
-    }
+
+        thinkingConfig: {
+          thinkingBudget: 0,
+        },
+      },
+    });
+    console.log(response.text);
+    return NextResponse.json({ response: response.text }, { status: 200 });
+  } catch (error) {
+    console.log("Error in chat bot", error);
+
+    console.error({ error: "Error in executing chatbot" }, { status: 500 });
   }
 }

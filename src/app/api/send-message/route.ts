@@ -6,7 +6,8 @@ import { success } from "zod";
 export async function POST(request: Request) {
   await dbConnect();
 
-  const { username, content } = await request.json();
+  const { username, context } = await request.json();
+
   try {
     const foundUser = await UserModel.findOne({ username });
     if (!foundUser) {
@@ -20,7 +21,7 @@ export async function POST(request: Request) {
     }
 
     //User Found now check whether accepting message or not
-    if (!username.isAcceptingMessages) {
+    if (!foundUser.isAcceptingMessages) {
       return Response.json(
         {
           success: false,
@@ -30,7 +31,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const newMessage = { content, createdAt: new Date() };
+    const newMessage = { content: context, createdAt: new Date() };
 
     foundUser.messages.push(newMessage as Message);
 

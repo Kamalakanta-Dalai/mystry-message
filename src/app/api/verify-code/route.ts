@@ -8,17 +8,23 @@ export async function POST(request: Request) {
     const { username, code } = await request.json();
 
     const decodedUsername = decodeURIComponent(username);
+    const correctedUsername = decodedUsername.toLowerCase();
 
-    const user = await UserModel.findOne({ decodedUsername });
+    const user = await UserModel.findOne({
+      username: correctedUsername,
+    });
+    console.log("user:", user);
     const isCodeValid = user?.verifyCode === code;
     const isCodeNotExpired = user?.verifyCodeExpiry
       ? new Date(user.verifyCodeExpiry) > new Date()
       : false;
 
+    console.log(isCodeNotExpired);
+
     if (isCodeValid && isCodeNotExpired && user) {
       user.isVerified = true;
       await user.save();
-
+      console.log("Success block");
       return Response.json(
         {
           success: true,
@@ -27,6 +33,7 @@ export async function POST(request: Request) {
         { status: 200 }
       );
     } else if (!isCodeNotExpired) {
+      console.log("Expiry block");
       return Response.json(
         {
           success: false,
@@ -36,6 +43,7 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     } else {
+      console.log("Invalid block");
       return Response.json(
         {
           success: false,

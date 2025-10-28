@@ -43,6 +43,7 @@ export async function POST(request: Request) {
         }
       );
     }
+    updatedUser?.save();
     return Response.json(
       {
         success: true,
@@ -54,7 +55,7 @@ export async function POST(request: Request) {
       }
     );
   } catch (error) {
-    console.log("Failed to updat user status to accept messages");
+    console.log("Failed to update user status to accept messages");
     return Response.json(
       {
         success: false,
@@ -86,8 +87,10 @@ export async function GET(request: Request) {
   }
 
   const userId = user?._id;
+
   try {
     const foundUser = await UserModel.findById(userId);
+
     if (!foundUser) {
       return Response.json(
         {
@@ -102,12 +105,12 @@ export async function GET(request: Request) {
       {
         success: true,
         message: "status fetched",
-        isAceptingMessages: foundUser.isAcceptingMessages,
+        isAcceptingMessage: foundUser.isAcceptingMessages,
       },
       { status: 200 }
     );
   } catch (error) {
-    console.log("Failed to update user status to acept messages");
+    console.log("Failed to update user status to accept messages");
 
     return Response.json(
       { success: false, message: "Error in getting message acceptance status" },

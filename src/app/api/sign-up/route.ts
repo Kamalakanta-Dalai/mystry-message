@@ -16,7 +16,7 @@ export async function POST(request: Request) {
       username,
       isVerified: true,
     });
-    console.log(existingUserVerifiedByUsername);
+    console.log("ExistingUserByUsername", existingUserVerifiedByUsername);
 
     if (existingUserVerifiedByUsername) {
       return Response.json(
@@ -31,6 +31,7 @@ export async function POST(request: Request) {
     }
 
     const existingUserByEmail = await UserModel.findOne({ email });
+    console.log("ExistingUserByEmail", existingUserByEmail);
     const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
 
     if (existingUserByEmail) {
