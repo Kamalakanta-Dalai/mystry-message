@@ -21,6 +21,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 
+interface SuggestedMessageItem {
+  questionNumber?: string;
+  question: string;
+}
+
 const FeedbackPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -85,10 +90,12 @@ const FeedbackPage = () => {
       const response = await axios.get("/api/suggest-messages");
 
       // Parse the JSON string from the response
-      const parsedData = JSON.parse(response.data.response);
+      const parsedData = JSON.parse(
+        response.data.response
+      ) as SuggestedMessageItem[];
 
       // Transform the data to match the items format
-      const transformedItems = parsedData.map((item: any) => ({
+      const transformedItems = parsedData.map((item) => ({
         key: item.questionNumber || `q${Math.random()}`,
         label: Array.isArray(item.question)
           ? item.question.join(" ")
@@ -104,7 +111,8 @@ const FeedbackPage = () => {
       const axiosError = error as AxiosError<ApiResponse>;
 
       toast("Error", {
-        description: "Failed generating messages",
+        description:
+          axiosError.response?.data.message || "Failed generating messages",
         position: "bottom-right",
         action: {
           label: "Close",
@@ -194,7 +202,7 @@ const FeedbackPage = () => {
           </Button>
           <div className="mx-auto max-w-md overflow-auto rounded-xl bg-white shadow-md md:max-w-2xl mt-2 mb-2 py-6 px-6">
             {items.length > 0 ? (
-              items.map((message, index) => (
+              items.map((message) => (
                 <Button
                   key={message.key}
                   type="button"

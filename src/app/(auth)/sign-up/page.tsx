@@ -53,7 +53,7 @@ const Page = () => {
             `/api/check-username-unique?username= ${username}`
           );
 
-          let message = response.data.message;
+          const message = response.data.message;
           setUsernameMessage(message);
         } catch (error) {
           const axiosError = error as AxiosError<ApiResponse>;
@@ -88,7 +88,7 @@ const Page = () => {
     } catch (error) {
       console.error("Error in signup of user", error);
       const axiosError = error as AxiosError<ApiResponse>;
-      let errorMessage = axiosError.response?.data.message;
+      const errorMessage = axiosError.response?.data.message;
       toast("SignUp failed", {
         description: errorMessage,
         position: "bottom-right",

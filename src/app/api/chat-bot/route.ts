@@ -1,6 +1,5 @@
 import { google } from "@ai-sdk/google";
 import {
-  streamText,
   APICallError,
   UIMessage,
   convertToModelMessages,
@@ -18,17 +17,6 @@ export async function POST(req: Request) {
 
     // Debug: Log the messages to understand the structure
     console.log("Received messages:", JSON.stringify(messages, null, 2));
-
-    // Validate and filter messages to ensure they have proper role and content
-    // const validMessages = messages.filter(
-    //   (message) =>
-    //     message &&
-    //     typeof message === "object" &&
-    //     message.role &&
-    //     (message as any).content
-    // );
-
-    // console.log("Valid messages:", JSON.stringify(validMessages, null, 2));
 
     // If no valid messages, return default suggestions
     if (messages.length === 0) {

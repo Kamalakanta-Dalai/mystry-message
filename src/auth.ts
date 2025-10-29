@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import dbConnect from "./app/lib/dbConnect";
 import UserModel from "./app/model/User";
+import type { User as NextAuthUser } from "next-auth";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -10,8 +11,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       name: "Credentials",
       id: "credentials",
       credentials: {
-        email: {
-          type: "email",
+        identifier: {
+          type: "text",
           label: "Email",
           placeholder: "johndoe@gmail.com",
         },
@@ -21,11 +22,26 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           placeholder: "*****",
         },
       },
-      async authorize(credentials: any): Promise<any> {
+      async authorize(
+        credentials: Partial<Record<"identifier" | "password", unknown>>
+      ): Promise<NextAuthUser | null> {
         await dbConnect();
         try {
+          const identifier =
+            typeof credentials?.identifier === "string"
+              ? credentials.identifier
+              : undefined;
+          const password =
+            typeof credentials?.password === "string"
+              ? credentials.password
+              : undefined;
+
+          if (!identifier || !password) {
+            throw new Error("Email and password are required");
+          }
+
           const user = await UserModel.findOne({
-            email: credentials.identifier,
+            email: identifier,
           });
 
           if (!user) {
@@ -36,16 +52,26 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           }
 
           const isPasswordCorrect = await bcrypt.compare(
-            credentials.password,
+            password,
             user.password
           );
           if (isPasswordCorrect) {
-            return user;
+            return {
+              id: user._id?.toString() || "",
+              email: user.email,
+              name: user.username,
+              _id: user._id?.toString(),
+              isVerified: user.isVerified,
+              isAcceptingMessages: user.isAcceptingMessages,
+              username: user.username,
+            };
           } else {
             throw new Error("Incorrect Password");
           }
-        } catch (err: any) {
-          throw new Error(err);
+        } catch (err) {
+          const errorMessage =
+            err instanceof Error ? err.message : "An unknown error occurred";
+          throw new Error(errorMessage);
         }
       },
     }),
@@ -60,7 +86,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return token;
     },
-    async session({ session, token, user }) {
+    async session({ session, token }) {
       if (token) {
         session.user._id = token._id;
         session.user.isVerified = token.isVerified;

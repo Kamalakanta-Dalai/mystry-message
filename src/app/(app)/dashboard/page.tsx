@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Message } from "@/app/model/User";
 import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ApiResponse } from "@/app/types/ApiResponse";
 import { toast } from "sonner";
@@ -27,8 +28,9 @@ const Dashboard = () => {
   const router = useRouter();
   const { data: session } = useSession();
 
-  const form = useForm({
-    resolver: zodResolver(acceptMessageScehma as any),
+  const form = useForm<z.infer<typeof acceptMessageScehma>>({
+    resolver: zodResolver(acceptMessageScehma),
+    defaultValues: { acceptMessages: false },
   });
 
   const { register, watch, setValue } = form;
@@ -40,7 +42,7 @@ const Dashboard = () => {
     try {
       const response = await axios.get<ApiResponse>("/api/accept-messages");
       console.log("API Response:", response.data);
-      setValue("acceptMessages", response.data.isAcceptingMessage);
+      setValue("acceptMessages", response.data.isAcceptingMessage ?? false);
       console.log(
         "accept message after setValue:",
         response.data.isAcceptingMessage
